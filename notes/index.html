@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <link rel="manifest" href="/assets/manifest.json" />
+    <link rel="component" href="/assets/note-card.html" />
+    <link
+      rel="component"
+      href="https://sodium.static.apphor.de/lucide-icon.html"
+    />
+    <title>Notes</title>
+    <meta name="theme-color" content="#e91e63" />
+    <script type="importmap">
+      {
+        "imports": {
+          "@li3/": "https://at-li3.static.apphor.de/",
+          "@sodium/": "https://sodium.static.apphor.de/"
+        }
+      }
+    </script>
+    <link
+      href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <link href="/style.css" rel="stylesheet" />
+    <script type="module">
+      import "@li3/web";
+    </script>
+  </head>
+
+  <body class="bg-primary text-white h-screen">
+    <template app>
+      <template if="loading">
+        <div class="h-screen flex align-center items-center">
+          <lucide-icon icon="refresh-cw" size="32" class="animate-spin"></lucide-icon>
+        </div>
+      </template>
+
+      <div class="z-10 absolute bottom-0 right-0 mr-4 mb-4">
+        <template if="profile">
+          <button
+            class="shadow-lg bg-white text-4xl text-primary w-12 h-12 rounded-full flex items-center justify-center"
+            on-click="onAdd()"
+          >
+            <lucide-icon icon="pencil"></lucide-icon>
+          </button>
+        </template>
+        <template if="!profile">
+          <button
+            class="shadow-lg bg-white text-4xl text-primary w-12 h-12 rounded-full flex items-center justify-center"
+            on-click="signIn()"
+          >
+            <lucide-icon icon="user"></lucide-icon>
+          </button>
+        </template>
+      </div>
+
+      <div class="h-screen overflow-y-auto p-4 pb-20">
+        <template for="note of notes">
+          <note-card
+            class="w-full mb-2 block"
+            attr-key="note.uid"
+            bind-note="note"
+            on-modify="onModify($event.detail)"
+            on-delete="onDelete(note)"
+            on-toggle="onToggle(note)"
+          ></note-card>
+        </template>
+      </div>
+
+      <script setup="" src="/app.mjs"></script>
+    </template>
+  </body>
+</html>

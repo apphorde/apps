@@ -1,0 +1,97 @@
+<template component="note-card">
+  <template if="note">
+    <div class="relative bg-white rounded shadow-md py-2">
+      <button
+        on-click="onToggle()"
+        class="absolute top-1 right-1 w-8 h-8 text-lg leading-none transition transform"
+        class-rotate-180="!note.collapse"
+      >
+        <lucide-icon icon="chevron-down" class="text-primary"></lucide-icon>
+      </button>
+      <div class="text-gray-800">
+        <input
+          class="text-lg pl-3 pr-8 font-medium text-black bg-transparent w-full"
+          placeholder="New note"
+          bind-value="note.title || ''"
+          on-change="onSetTitle($event.target.value)"
+        />
+        <div class-hidden="note.collapse">
+          <template if="note.type == 'text' || !note.type">
+            <div class="m-3 p-3 bg-gray-100 rounded text-sm">
+              <textarea
+                bind-value="note.content || ''"
+                on-change="onSetContent($event.target.value)"
+                bind-rows="textHeight"
+                class="text-sm w-full block bg-transparent whitespace-pre-wrap"
+                placeholder="Note..."
+              ></textarea>
+            </div>
+          </template>
+          <template if="note.type == 'tasks'">
+            <!-- template for="task of note.tasks">
+            <div class="flex px-2 py-3 text-sm mx-1">
+              <input v-model="task.completed"
+                type="checkbox"
+                class="mr-2" />
+              <input v-model="task.task"
+                on-keyup="onTaskKeyUp($event, task)"
+                type="text"
+                class="bg-transparent border-0 flex-grow text-sm" />
+            </div>
+          </template -->
+            <div class="pt-2">
+              <button class="text-sm p-1" on-click="onAddTask()">
+                <lucide-icon icon="plus" class="text-primary"></lucide-icon>
+              </button>
+            </div>
+          </template>
+          <template if="note.type == 'html'">
+            <div
+              class="m-3 p-3 bg-gray-100 rounded text-sm"
+              contenteditable="true"
+              on-input="onNoteHtmlChange($event)"
+            >
+              <div bind-innerhtml="noteHTML"></div>
+            </div>
+          </template>
+
+          <div
+            class="flex gap-2 justify-end text-gray-900 bg-gray-100 rounded-sm mt-3 shadow"
+          >
+            <button
+              on-click="onNoteAutomagic()"
+              class="w-8 h-8 text-lg leading-none p-1"
+            >
+              <lucide-icon size="18" bind-icon="generating ? 'refresh-cw' : 'sparkles'" class="text-primary" class-animate-spin="generating"></lucide-icon>
+            </button>
+            <button
+              on-click="onUseCheckList()"
+              class="w-8 h-8 text-lg leading-none p-1"
+            >
+              <lucide-icon size="18" icon="list-checks"></lucide-icon>
+            </button>
+            <button
+              on-click="onUseText()"
+              class="w-8 h-8 text-lg leading-none p-1"
+            >
+              <lucide-icon size="18" icon="file-text"></lucide-icon>
+            </button>
+            <button
+              on-click="onUseHtml()"
+              class="w-8 h-8 text-lg leading-none p-1"
+            >
+              <lucide-icon size="18" icon="code"></lucide-icon>
+            </button>
+            <button
+              on-click="onDeleteNote()"
+              class="w-8 h-8 text-lg leading-none p-1"
+            >
+              <lucide-icon size="18" icon="trash" class="text-red-600"></lucide-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+  <script setup="" src="/assets/note-card.mjs"></script>
+</template>

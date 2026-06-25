@@ -1,0 +1,21 @@
+{
+  "name": "Notes",
+  "short_name": "Notes",
+  "description": "Just take some notes",
+  "icons": [
+    {
+      "src": "/assets/icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/assets/icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#e91e63",
+  "background_color": "#e91e63"
+}
