@@ -1,0 +1,168 @@
+<template component="x-pomodoro">
+  <style>
+    .pomodoro {
+      background-color: var(--pomodoro-bg, #629438);
+      color: var(--pomodoro-color);
+    }
+
+    .pomodoro-text {
+      color: var(--pomodoro-color, white);
+    }
+
+    .pomodoro-running {
+      background-color: var(--pomodoro-bg-running, #d13934);
+    }
+  </style>
+  <div class="flex space-y-6 items-center justify-center h-20 pomodoro">
+    <template if="running">
+      <div class="text-5xl font-bold pomodoro-text">{{ padLeft(minutesLeft) }}:{{ padLeft(secondsLeft) }}</div>
+    </template>
+    <template if="!running">
+      <div class="flex items-center justify-center">
+        <input
+          class="text-5xl font-bold w-16 rounded-lg bg-transparent text-right pomodoro-text"
+          bind-value="requestedTime"
+          on-input="setRequestedTime($event.target.value)"
+        />
+        <span class="pomodoro-text text-5xl font-bold">:00</span>
+      </div>
+    </template>
+  </div>
+  <div class="w-full rounded-full border border-white" class-opacity-0="!running">
+    <span style-width="progress + '%'" class="h-2 block bg-white opacity-50 rounded-full"></span>
+  </div>
+  <div class="flex items-center justify-stretch space-x-4 mt-4">
+    <button
+      on-click="onStart()"
+      class-pomodoro-running="running"
+      class-bg-green-700="!running"
+      class="flex items-center justify-center whitespace-nowrap rounded-md font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2 pomodoro-text"
+    >
+      {{ running ? 'Stop' : 'Start' }}
+    </button>
+    <template if="running">
+      <button
+        on-click="onPause()"
+        class="flex w-full items-center justify-center whitespace-nowrap rounded-md font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2 pomodoro-text"
+      >
+        {{ paused ? 'Continue' : 'Pause' }}
+      </button>
+    </template>
+    <button
+      on-click="onReset()"
+      class="flex items-center justify-center whitespace-nowrap rounded-md font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2 pomodoro-text"
+    >
+      Reset
+    </button>
+  </div>
+  <script setup>
+    import { computed, ref, loadCss } from "@li3/web";
+
+    export default function () {
+      let timer = 0;
+      let wakeLock;
+      const initialTime = 25;
+      const running = ref(false);
+      const paused = ref(false);
+      const requestedTime = ref(String(initialTime));
+      const timeLeft = ref(initialTime * 60);
+      const minutesLeft = computed(() => Math.floor(timeLeft.value / 60));
+      const secondsLeft = computed(() => Math.floor(timeLeft.value % 60));
+      const getRequestedTime = () => parseInt(requestedTime.value) || initialTime;
+      const padLeft = (n) => String(n).padStart(2, "0");
+      const progress = computed(() => {
+        const left = timeLeft.value;
+        const requested = requestedTime.value;
+
+        if (running.value) {
+          return Math.floor(100 * (left / (Number(requested) * 60)));
+        }
+
+        return 0;
+      });
+
+      function setRequestedTime(t) {
+        requestedTime.value = t;
+      }
+
+      function onStop() {
+        clearInterval(timer);
+        running.value = false;
+        paused.value = false;
+        wakeLock?.release();
+      }
+
+      function onPause() {
+        paused.value = !paused.value;
+      }
+
+      async function onStart() {
+        if (running.value) {
+          onStop();
+          return;
+        }
+
+        timeLeft.value = getRequestedTime() * 60;
+        timer = setInterval(onTick, 1000);
+        running.value = true;
+
+        if (Notification.permission !== "granted") {
+          Notification.requestPermission();
+        }
+
+        wakeLock = await navigator.wakeLock.request("screen");
+      }
+
+      function onReset() {
+        timeLeft.value = getRequestedTime() * 60;
+      }
+
+      function onTick() {
+        if (paused.value) return;
+
+        timeLeft.value -= 1;
+
+        if (timeLeft.value <= 0) {
+          onStop();
+          notify();
+        }
+      }
+
+      function timeIsUp() {
+        new Notification("Pomodoro", {
+          body: "Time is up!",
+          icon: "/assets/icon.svg",
+        });
+      }
+
+      function notify() {
+        if (Notification.permission === "denied") {
+          return;
+        }
+
+        Notification.requestPermission().then((permission) => {
+          if (permission === "granted") {
+            timeIsUp();
+          }
+        });
+      }
+
+      loadCss("https://wdn.homebots.io/tailwind.css");
+
+      return {
+        running,
+        paused,
+        requestedTime,
+        timeLeft,
+        minutesLeft,
+        secondsLeft,
+        progress,
+        setRequestedTime,
+        onStart,
+        onPause,
+        onReset,
+        padLeft,
+      };
+    }
+  </script>
+</template>

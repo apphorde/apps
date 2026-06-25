@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/assets/icon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pomodoro Timer</title>
+    <link rel="manifest" href="/assets/manifest.json" />
+    <meta name="theme-color" content="#629438" />
+    <link rel="stylesheet" href="https://wdn.homebots.io/tailwind.css" />
+    <link rel="component" href="/x-pomodoro.html" />
+    <script type="importmap">
+      {
+        "imports": {
+          "@li3/": "https://at-li3.static.apphor.de/",
+          "@sodium/": "https://at-sodium.static.apphor.de/"
+        }
+      }
+    </script>
+    <script type="module">
+      import "@li3/web";
+    </script>
+  </head>
+  <body>
+    <template app>
+      <main
+        class="flex flex-col items-center justify-center h-screen bg-primary overflow-auto p-8"
+      >
+        <div class="max-w-md w-full space-y-8">
+          <div class="text-center text-white">
+            <img src="/assets/icon.svg" class="w-40 mx-auto" />
+            <p>It's <span class="font-bold">focus</span> time!</p>
+          </div>
+          <x-pomodoro></x-pomodoro>
+        </div>
+      </main>
+      <style>
+        :root {
+          --pomodoro-bg: #629438;
+          --pomodoro-bg-running: #d13934;
+          --pomodoro-color: white;
+        }
+
+        .bg-primary {
+          background-color: var(--pomodoro-bg);
+        }
+      </style>
+    </template>
+  </body>
+</html>
