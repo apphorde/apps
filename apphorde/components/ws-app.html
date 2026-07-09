@@ -14,10 +14,11 @@
   <div class="h-screen w-screen overflow-hidden bg-gray-900 select-none">
     <ws-toolbar
       on-tile="tileApplets()"
-      on-resetall="resetView()"
+      on-resetall="onResetView()"
       on-showall="showAllApplets()"
       on-clear="clearAll()"
-      bind-applets="applets"></ws-toolbar>
+      bind-applets="applets"
+    ></ws-toolbar>
 
     <ws-canvas
       on-dragover.prevent=""
@@ -25,33 +26,32 @@
       on-draw="onDraw($event)"
       on-move="onResize($event.detail)"
       style="z-index: -1"
-    ></ws-canvas>
-
-    <template for="applet of applets">
-      <ws-applet
-        bind-title="`${applet.x} : ${applet.y}`"
-        on-dragover.prevent=""
-        on-dragstart="onDragStart(applet, $event)"
-        on-dragend="onDragStop(applet, $event)"
-        on-focus="bringToFront(applet.id)"
-        bind-draggable="true"
-        bind-id="applet.id"
-        bind-applet="applet"
-        on-resizestart="onResizeStart(applet, $event.detail)"
-        on-resizestop="onResizeStop(applet, $event)"
-        on-select="onSelect(applet, $event.detail)"
-        on-delete="onDelete(applet)"
-        style-zIndex="`${applet.zIndex || 1}`"
-        bind-style="{
-          left: `${applet.x}px`,
-          top: `${applet.y}px`,
-          width: `${applet.width}px`,
-          height: `${applet.height}px`,
-          zIndex: `${applet.zIndex || 1}`,
-        }"
-        style-zoom="zoom"
-        class="absolute block focus:ring-2 focus:ring-blue-500"
-      ></ws-applet>
-    </template>
+    >
+      <template for="applet of applets">
+        <ws-applet
+          bind-title="`${applet.x} : ${applet.y}`"
+          on-dragover.prevent=""
+          on-dragstart="onDragStart(applet, $event)"
+          on-dragend="onDragStop(applet, $event)"
+          on-focus="bringToFront(applet.id)"
+          bind-draggable="true"
+          bind-id="applet.id"
+          bind-applet="applet"
+          on-resizestart="onResizeStart(applet, $event.detail)"
+          on-resizestop="onResizeStop(applet, $event)"
+          on-select="onSelect(applet, $event.detail)"
+          on-delete="onDelete(applet)"
+          style-zIndex="`${applet.zIndex || 1}`"
+          bind-style="{
+            left: `${applet.x}px`,
+            top: `${applet.y}px`,
+            width: `${applet.width}px`,
+            height: `${applet.height}px`,
+            zIndex: `${applet.zIndex || 1}`,
+          }"
+          class="absolute block focus:ring-2 focus:ring-blue-500"
+        ></ws-applet>
+      </template>
+    </ws-canvas>
   </div>
 </template>

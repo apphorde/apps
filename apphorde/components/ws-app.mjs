@@ -3,10 +3,10 @@ import useStore, { storeToRefs } from "@app/store.mjs";
 
 export default function () {
   const store = useStore();
-  const { panX, panY, zoom } = storeToRefs(store);
+  const { zoom } = storeToRefs(store);
 
   const applets = ref(
-    JSON.parse(localStorage.getItem("workspace-applets") || "[]")
+    JSON.parse(localStorage.getItem("workspace-applets") || "[]"),
   );
 
   const dragOffsetX = ref(0);
@@ -47,7 +47,7 @@ export default function () {
 
   function updateApplet(id, updates) {
     applets.value = applets.value.map((x) =>
-      x.id === id ? { ...x, ...updates } : x
+      x.id === id ? { ...x, ...updates } : x,
     );
   }
 
@@ -199,9 +199,9 @@ export default function () {
     const centerX = (minX + maxX) / 2;
     const centerY = (minY + maxY) / 2;
 
-    zoom.value = newZoom;
-    panX.value = viewportWidth / 2 - centerX * newZoom;
-    panY.value = viewportHeight / 2 - centerY * newZoom;
+    const newPanX = viewportWidth / 2 - centerX * newZoom;
+    const newPanY = viewportHeight / 2 - centerY * newZoom;
+    store.updateCanvas(newPanX, newPanY, zoom.value);
   }
 
   function tileApplets() {
@@ -214,13 +214,13 @@ export default function () {
     const tileWidth = (viewportWidth - gap * 3) / 2;
     const tileHeight = (viewportHeight - gap * 3) / 2;
 
-    zoom.value = 1;
-    panX.value = 0;
-    panY.value = 0;
+    // Reset zoom and pan before tiling
+    store.updateCanvas(0, 0, 1);
 
     applets.value = list.map((applet, index) => {
       const col = index % 2;
       const row = Math.floor(index / 2);
+
       return {
         ...applet,
         x: gap + col * (tileWidth + gap),
