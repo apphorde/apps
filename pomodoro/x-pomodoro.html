@@ -1,62 +1,68 @@
-<template component="x-pomodoro">
+<template component="x-pomodoro" shadow-dom="open">
+  <link rel="component" href="https://sodium.static.apphor.de/lucide-icon.html" />
+  <link rel="stylesheet" href="https://wdn.homebots.io/tailwind.css" />
   <style>
     .pomodoro {
       background-color: var(--pomodoro-bg, #629438);
       color: var(--pomodoro-color);
     }
 
-    .pomodoro-text {
+    .text-tomato {
       color: var(--pomodoro-color, white);
     }
 
-    .pomodoro-running {
+    .bg-tomato {
       background-color: var(--pomodoro-bg-running, #d13934);
     }
+
+    .button-solid svg {
+      fill: currentColor;
+    }
   </style>
-  <div class="flex space-y-6 items-center justify-center h-20 pomodoro">
-    <template if="running">
-      <div class="text-5xl font-bold pomodoro-text">{{ padLeft(minutesLeft) }}:{{ padLeft(secondsLeft) }}</div>
-    </template>
-    <template if="!running">
-      <div class="flex items-center justify-center">
-        <input
-          class="text-5xl font-bold w-16 rounded-lg bg-transparent text-right pomodoro-text"
-          bind-value="requestedTime"
-          on-input="setRequestedTime($event.target.value)"
-        />
-        <span class="pomodoro-text text-5xl font-bold">:00</span>
-      </div>
-    </template>
+  <div class="flex space-y-6 items-center justify-center h-20 pomodoro text-tomato">
+    <div class="text-5xl font-bold" class-hidden="!running">{{ padLeft(minutesLeft) }}:{{ padLeft(secondsLeft) }}</div>
+    <div class="flex items-center justify-center" class-hidden="running">
+      <input
+        class="text-5xl font-bold w-16 rounded-lg bg-transparent text-right text-tomato"
+        bind-value="requestedTime"
+        on-input="setRequestedTime($event.target.value)"
+      />
+      <span class="text-5xl font-bold">:00</span>
+    </div>
   </div>
-  <div class="w-full rounded-full border border-white" class-opacity-0="!running">
+  <div class="w-2/3 mx-auto rounded-full border border-white" class-opacity-0="!running">
     <span style-width="progress + '%'" class="h-2 block bg-white opacity-50 rounded-full"></span>
   </div>
-  <div class="flex items-center justify-stretch space-x-4 mt-4">
-    <button
-      on-click="onStart()"
-      class-pomodoro-running="running"
-      class-bg-green-700="!running"
-      class="flex items-center justify-center whitespace-nowrap rounded-md font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2 pomodoro-text"
-    >
-      {{ running ? 'Stop' : 'Start' }}
-    </button>
-    <template if="running">
-      <button
-        on-click="onPause()"
-        class="flex w-full items-center justify-center whitespace-nowrap rounded-md font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2 pomodoro-text"
-      >
-        {{ paused ? 'Continue' : 'Pause' }}
-      </button>
-    </template>
+  <div class="flex items-center justify-center gap-4 mt-4">
     <button
       on-click="onReset()"
-      class="flex items-center justify-center whitespace-nowrap rounded-md font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2 pomodoro-text"
+      class-hidden="!running"
+      class="flex items-center justify-center rounded-full font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 w-12 h-12 p-2 text-tomato"
     >
-      Reset
+      <lucide-icon icon="history"></lucide-icon>
+      <span class="sr-only">Reset</span>
+    </button>
+    <button
+      on-click="onStart()"
+      class-bg-tomato="running"
+      class-bg-green-700="!running"
+      class="flex items-center justify-center rounded-full font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-16 w-16 p-4 text-tomato button-solid"
+    >
+      <lucide-icon bind-icon="running ? 'square' : 'play'" size="24"></lucide-icon>
+      <span class="sr-only">Toggle</span>
+    </button>
+
+    <button
+      on-click="onPause()"
+      class-hidden="!running"
+      class="flex items-center justify-center rounded-full font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 w-12 h-12 p-2 text-tomato button-solid"
+    >
+      <lucide-icon bind-icon="paused ? 'play' : 'pause'"></lucide-icon>
+      <span class="sr-only">Pause/Continue</span>
     </button>
   </div>
   <script setup>
-    import { computed, ref, loadCss } from "@li3/web";
+    import { computed, ref } from "@li3/web";
 
     export default function () {
       let timer = 0;
@@ -146,8 +152,6 @@
           }
         });
       }
-
-      loadCss("https://wdn.homebots.io/tailwind.css");
 
       return {
         running,
