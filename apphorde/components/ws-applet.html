@@ -1,0 +1,183 @@
+<template component="ws-applet">
+  <div
+    class="relative rounded-lg border-2 border-gray-600 shadow-xl overflow-scroll flex flex-col bg-white"
+    on-click="onFocus()"
+  >
+    <template for="e of edges">
+      <div
+        bind-class="e.cls"
+        on-pointerdown.stop="onResizeStart({ clientX: $event.clientX, clientY: $event.clientY, edge: e.edge })"
+        on-pointerup.stop="onResizeStop()"
+      ></div>
+    </template>
+    <div
+      class="flex items-center justify-between bg-gray-700 px-3 py-2 shrink-0 cursor-move select-none"
+      xon-pointerdown.stop="onDragStart({ clientX: $event.clientX, clientY: $event.clientY })"
+      xon-pointerup.stop="onDragStop()"
+    >
+      <!-- content -->
+      <template if="!applet.app">
+        <span class="text-sm text-white truncate pointer-events-none">
+          Select an Applet
+        </span>
+      </template>
+      <template if="applet.app">
+        <span class="text-sm text-white truncate pointer-events-none">
+          {{applet.app.icon}} {{applet.app.name}} - {{ title }}
+        </span>
+      </template>
+
+      <button
+        class="ml-2 text-gray-400 hover:text-red-400 transition-colors text-lg leading-none"
+        on-click.stop="onDelete()"
+      >
+        &times;
+      </button>
+    </div>
+    <div class="flex-1 overflow-hidden">
+      <!-- content -->
+      <template if="!applet.app">
+        <div class="h-full overflow-auto p-3 bg-gray-900">
+          <div class="grid grid-cols-4 gap-2 text-white">
+            <template for="app of APPLETS">
+              <button
+                class="flex flex-col items-center gap-1.5 p-2 rounded-lg hover:bg-zinc-700/50 transition-colors group"
+                on-click="onSelect(app)"
+              >
+                <span
+                  class="text-2xl group-hover:scale-110 transition-transform"
+                  >{{app.icon}}</span
+                >
+                <span
+                  class="text-xs text-zinc-300 text-center leading-tight truncate w-full"
+                  >{{app.name}}</span
+                >
+              </button>
+            </template>
+          </div>
+        </div>
+      </template>
+      <template if="applet.app">
+        <iframe
+          class="w-full h-full border-0"
+          bind-src="applet.app.url"
+          bind-title="applet.name"
+          sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+        ></iframe>
+      </template>
+    </div>
+  </div>
+  <script setup>
+    import { ref, computed, defineProp, defineEvent, loadCss } from "@li3/web";
+
+    const APPLETS = [
+      {
+        id: "calculator",
+        name: "Calculator",
+        icon: "🧮",
+        url: "https://www.calculator.net/",
+      },
+      {
+        id: "clock",
+        name: "World Clock",
+        icon: "🕐",
+        url: "https://www.timeanddate.com/worldclock/",
+      },
+      {
+        id: "weather",
+        name: "Weather",
+        icon: "🌤️",
+        url: "https://www.weather.gov/",
+      },
+      {
+        id: "notes",
+        name: "Notes",
+        icon: "📝",
+        url: "https://notes.apphor.de",
+      },
+      {
+        id: "maps",
+        name: "Maps",
+        icon: "🗺️",
+        url: "https://www.openstreetmap.org/export/embed.html",
+      },
+      {
+        id: "wikipedia",
+        name: "Wikipedia",
+        icon: "📚",
+        url: "https://en.wikipedia.org/wiki/Main_Page",
+      },
+      {
+        id: "translator",
+        name: "Translator",
+        icon: "🌐",
+        url: "https://translate.google.com/",
+      },
+      {
+        id: "pomodoro",
+        name: "Timer",
+        icon: "🍅",
+        url: "https://pomodoro.apphor.de",
+      },
+    ];
+
+    const edges = [
+      {
+        cls: "absolute top-0 left-2 right-2 h-1 cursor-n-resize hover:bg-blue-500/50",
+        edge: "n",
+      },
+      {
+        cls: "absolute bottom-0 left-2 right-2 h-1 cursor-s-resize hover:bg-blue-500/50",
+        edge: "s",
+      },
+      {
+        cls: "absolute left-0 top-2 bottom-2 w-1 cursor-w-resize hover:bg-blue-500/50",
+        edge: "w",
+      },
+      {
+        cls: "absolute right-0 top-2 bottom-2 w-1 cursor-e-resize hover:bg-blue-500/50",
+        edge: "e",
+      },
+      {
+        cls: "absolute top-0 left-0 w-2 h-2 cursor-nw-resize hover:bg-blue-500/50",
+        edge: "nw",
+      },
+      {
+        cls: "absolute top-0 right-0 w-2 h-2 cursor-ne-resize hover:bg-blue-500/50",
+        edge: "ne",
+      },
+      {
+        cls: "absolute bottom-0 left-0 w-2 h-2 cursor-sw-resize hover:bg-blue-500/50",
+        edge: "sw",
+      },
+      {
+        cls: "absolute bottom-0 right-0 w-2 h-2 cursor-se-resize hover:bg-blue-500/50",
+        edge: "se",
+      },
+    ];
+
+    export default function () {
+      loadCss(
+        "https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css"
+      );
+
+      const applet = defineProp("applet");
+      const title = defineProp("title");
+      const onResizeStart = defineEvent("resizestart");
+      const onResizeStop = defineEvent("resizestop");
+      const onFocus = defineEvent("focus");
+      const onDelete = defineEvent("delete");
+      const onSelect = defineEvent("select");
+
+      return {
+        edges,
+        APPLETS,
+        onResizeStart,
+        onResizeStop,
+        onDelete,
+        onSelect,
+        onFocus,
+      };
+    }
+  </script>
+</template>
