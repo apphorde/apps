@@ -41,42 +41,43 @@ const APPLETS = [
 
 const edges = [
   {
-    cls: "absolute top-0 left-2 right-2 h-1 cursor-n-resize hover:bg-blue-500/50",
+    cls: "absolute top-0 left-2 right-2 h-1 cursor-n-resize hover:bg-blue-500",
     edge: "n",
   },
   {
-    cls: "absolute bottom-0 left-2 right-2 h-1 cursor-s-resize hover:bg-blue-500/50",
+    cls: "absolute bottom-0 left-2 right-2 h-1 cursor-s-resize hover:bg-blue-500",
     edge: "s",
   },
   {
-    cls: "absolute left-0 top-2 bottom-2 w-1 cursor-w-resize hover:bg-blue-500/50",
+    cls: "absolute left-0 top-2 bottom-2 w-1 cursor-w-resize hover:bg-blue-500",
     edge: "w",
   },
   {
-    cls: "absolute right-0 top-2 bottom-2 w-1 cursor-e-resize hover:bg-blue-500/50",
+    cls: "absolute right-0 top-2 bottom-2 w-1 cursor-e-resize hover:bg-blue-500",
     edge: "e",
   },
   {
-    cls: "absolute top-0 left-0 w-2 h-2 cursor-nw-resize hover:bg-blue-500/50",
+    cls: "absolute top-0 left-0 w-2 h-2 cursor-nw-resize hover:bg-blue-500",
     edge: "nw",
   },
   {
-    cls: "absolute top-0 right-0 w-2 h-2 cursor-ne-resize hover:bg-blue-500/50",
+    cls: "absolute top-0 right-0 w-2 h-2 cursor-ne-resize hover:bg-blue-500",
     edge: "ne",
   },
   {
-    cls: "absolute bottom-0 left-0 w-2 h-2 cursor-sw-resize hover:bg-blue-500/50",
+    cls: "absolute bottom-0 left-0 w-2 h-2 cursor-sw-resize hover:bg-blue-500",
     edge: "sw",
   },
   {
-    cls: "absolute bottom-0 right-0 w-2 h-2 cursor-se-resize hover:bg-blue-500/50",
+    cls: "absolute bottom-0 right-0 w-2 h-2 cursor-se-resize hover:bg-blue-500",
     edge: "se",
   },
 ];
 
 export default function () {
-  const applet = defineProp("applet");
-  const title = defineProp("title");
+  defineProp("applet");
+  defineProp("title");
+
   const onResizeStart = defineEvent("resizestart");
   const onResizeStop = defineEvent("resizestop");
   const onFocus = defineEvent("focus");

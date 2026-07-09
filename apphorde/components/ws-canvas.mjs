@@ -48,8 +48,7 @@ export default function () {
 
   function onPointerMove(e) {
     if (isPanning.value) {
-      panX.value = e.clientX - panStartX.value;
-      panY.value = e.clientY - panStartY.value;
+      store.updateCanvas(e.clientX - panStartX.value, e.clientY - panStartY.value);
       return;
     }
 

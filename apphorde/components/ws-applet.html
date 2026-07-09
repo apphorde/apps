@@ -11,8 +11,8 @@
     <template for="e of edges">
       <div
         bind-class="e.cls"
-        on-pointerdown.stop="onResizeStart({ clientX: $event.clientX, clientY: $event.clientY, edge: e.edge })"
-        on-pointerup.stop="onResizeStop()"
+        on-pointerdown.stop.prevent="onResizeStart({ clientX: $event.clientX, clientY: $event.clientY, edge: e.edge })"
+        on-pointerup.stop.prevent="onResizeStop({ clientX: $event.clientX, clientY: $event.clientY, edge: e.edge })"
       ></div>
     </template>
     <div

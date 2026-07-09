@@ -25,11 +25,11 @@
       on-drop.prevent="onDrop($event)"
       on-draw="onDraw($event)"
       on-move="onResize($event.detail)"
+      on-pointerup="onResizeStop()"
       style="z-index: -1"
     >
       <template for="applet of applets">
         <ws-applet
-          bind-title="`${applet.x} : ${applet.y}`"
           on-dragover.prevent=""
           on-dragstart="onDragStart(applet, $event)"
           on-dragend="onDragStop(applet, $event)"
@@ -38,7 +38,7 @@
           bind-id="applet.id"
           bind-applet="applet"
           on-resizestart="onResizeStart(applet, $event.detail)"
-          on-resizestop="onResizeStop(applet, $event)"
+          on-resizestop="onResize($event.detail)"
           on-select="onSelect(applet, $event.detail)"
           on-delete="onDelete(applet)"
           style-zIndex="`${applet.zIndex || 1}`"

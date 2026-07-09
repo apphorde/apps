@@ -1,4 +1,4 @@
-import { ref, computed } from '@li3/web';
+import { ref, computed } from "@li3/web";
 
 let stores = new Map();
 
@@ -10,10 +10,10 @@ function defineStore(name, fn) {
 
     const store = fn();
     const view = {};
-    const error = new Error('Store values are read-only');
+    const error = new Error("Store values are read-only");
 
     for (const [name, value] of Object.entries(store)) {
-      if (typeof value === 'function') {
+      if (typeof value === "function") {
         view[name] = value;
       } else {
         Object.defineProperty(view, name, {
@@ -23,17 +23,17 @@ function defineStore(name, fn) {
           },
           set() {
             throw error;
-          }
+          },
         });
       }
     }
 
     stores.set(name, view);
     return view;
-  }
+  };
 }
 
-export default defineStore('store', function useStore() {
+export default defineStore("store", function useStore() {
   const zoom = ref(1);
   const panX = ref(0);
   const panY = ref(0);
@@ -54,7 +54,10 @@ export default defineStore('store', function useStore() {
   function updateCanvas(x, y, z) {
     panX.value = x;
     panY.value = y;
-    zoom.value = z;
+
+    if (z !== undefined) {
+      zoom.value = z;
+    }
   }
 
   return {
@@ -72,11 +75,11 @@ export function storeToRefs(store) {
   const refs = {};
 
   for (const [name, value] of Object.entries(store)) {
-    if (typeof value !== 'function') {
+    if (typeof value !== "function") {
       Object.defineProperty(refs, name, {
         get() {
           return computed(() => store[name]);
-        }
+        },
       });
     }
   }

@@ -11,16 +11,17 @@ export default function () {
 
   const dragOffsetX = ref(0);
   const dragOffsetY = ref(0);
-  const resizeEdge = ref("");
-  const resizeApplet = ref(null);
-  const resize = ref({
+  let resizeEdge = "";
+  let resizeApplet = null;
+  let resize = {
     x: 0,
     y: 0,
     width: 0,
     height: 0,
     currentX: 0,
     currentY: 0,
-  });
+  };
+
   const nextZIndex = computed(() => {
     const list = applets.value;
     if (list.length === 0) return 1;
@@ -93,42 +94,37 @@ export default function () {
     console.log(applets.value.find((a) => a.id === id));
   }
 
-  function onResize(applet, position) {
-    if (!resizeEdge.value || !resizeApplet.value) {
-      return;
-    }
+  function onResize(position) {
+    if (!resizeApplet) return;
 
     const { x, y } = position;
-    const v = resize.value;
     const pos = store.screenToCanvas(x, y);
-    const deltaX = pos.x - v.x;
-    const deltaY = pos.y - v.y;
+    const deltaX = pos.x - resize.x;
+    const deltaY = pos.y - resize.y;
 
-    let newX = v.currentX;
-    let newY = v.currentY;
-    let newWidth = v.width;
-    let newHeight = v.height;
+    let newX = resize.currentX;
+    let newY = resize.currentY;
+    let newWidth = resize.width;
+    let newHeight = resize.height;
 
-    const edge = resizeEdge.value;
-
-    if (edge.includes("e")) {
-      newWidth = Math.max(100, v.x + deltaX);
+    if (resizeEdge.includes("e")) {
+      newWidth = Math.max(100, resize.x + deltaX);
     }
-    if (edge.includes("w")) {
-      const widthChange = Math.min(deltaX, v.width - 100);
-      newX = v.currentX + widthChange;
-      newWidth = v.width - widthChange;
+    if (resizeEdge.includes("w")) {
+      const widthChange = Math.min(deltaX, resize.width - 100);
+      newX = resize.currentX + widthChange;
+      newWidth = resize.width - widthChange;
     }
-    if (edge.includes("s")) {
-      newHeight = Math.max(100, v.height + deltaY);
+    if (resizeEdge.includes("s")) {
+      newHeight = Math.max(100, resize.height + deltaY);
     }
-    if (edge.includes("n")) {
-      const heightChange = Math.min(deltaY, v.height - 100);
-      newY = v.y + heightChange;
-      newHeight = v.height - heightChange;
+    if (resizeEdge.includes("n")) {
+      const heightChange = Math.min(deltaY, resize.height - 100);
+      newY = resize.y + heightChange;
+      newHeight = resize.height - heightChange;
     }
 
-    updateApplet(applet.id, {
+    updateApplet(resizeApplet.id, {
       x: newX,
       y: newY,
       width: newWidth,
@@ -136,11 +132,16 @@ export default function () {
     });
   }
 
+  function onResizeStop() {
+    resizeApplet = null;
+    resizeEdge = "";
+  }
+
   function onResizeStart(applet, e) {
     const pos = store.screenToCanvas(e.clientX, e.clientY);
-    resizeEdge.value = e.edge;
-    resizeApplet.value = applet;
-    resize.value = {
+    resizeEdge = e.edge;
+    resizeApplet = applet;
+    resize = {
       x: pos.x,
       y: pos.y,
       width: applet.width,
@@ -148,12 +149,8 @@ export default function () {
       currentX: applet.x,
       currentY: applet.y,
     };
-    bringToFront(applet.id);
-  }
 
-  function onResizeStop() {
-    resizeEdge.value = "";
-    resizeApplet.value = null;
+    bringToFront(applet.id);
   }
 
   function onSelect(applet, app) {
