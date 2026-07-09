@@ -51,6 +51,12 @@ export default defineStore('store', function useStore() {
     };
   }
 
+  function updateCanvas(x, y, z) {
+    panX.value = x;
+    panY.value = y;
+    zoom.value = z;
+  }
+
   return {
     zoom,
     panX,
@@ -58,12 +64,13 @@ export default defineStore('store', function useStore() {
 
     resetView,
     screenToCanvas,
+    updateCanvas,
   };
 });
 
 export function storeToRefs(store) {
   const refs = {};
-  
+
   for (const [name, value] of Object.entries(store)) {
     if (typeof value !== 'function') {
       Object.defineProperty(refs, name, {

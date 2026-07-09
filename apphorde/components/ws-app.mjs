@@ -93,12 +93,12 @@ export default function () {
     console.log(applets.value.find((a) => a.id === id));
   }
 
-  function onResize(applet, e) {
+  function onResize(applet, position) {
     if (!resizeEdge.value || !resizeApplet.value) {
       return;
     }
 
-    const { x, y } = e.detail;
+    const { x, y } = position;
     const v = resize.value;
     const pos = store.screenToCanvas(x, y);
     const deltaX = pos.x - v.x;
@@ -260,5 +260,7 @@ export default function () {
     bringToFront,
     applets,
     items,
+
+    zoom,
   };
 }
